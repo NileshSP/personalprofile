@@ -1,10 +1,7 @@
 {
-	"background_color": "#ffffff",
-	"theme_color": "#333333",
-	"name": "Profile - Nilesh Patel",
-	"short_name": "Profile",
-	"display": "minimal-ui",
-	"start_url": "/",
+	"name": "Nilesh Patel - Bio/Profile",
+	"short_name": "NileshSP",
+	"description": "Nilesh Patel - Profile",
 	"icons": [
 		{
 			"src": "person.png",
@@ -15,6 +12,15 @@
 			"src": "person.png",
 			"sizes": "512x512",
 			"type": "image/png"
+		},
+		{
+			"src": "apple-touch-icon-180x180.png",
+			"sizes": "64x64 32x32 24x24 16x16 180x180 512x512 192x192 144x144",
+			"type": "image/png"
 		}
-	]
+	],
+	"start_url": ".",
+	"display": "standalone",
+	"background_color": "#ffffff",
+	"theme_color": "#333333"
 }
