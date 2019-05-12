@@ -53,6 +53,8 @@
 <style>
 .mainContainer {
 	height:87vh;
+	color: #333;
+	font-weight:500;	
 }
 
 .contactDetails {
@@ -60,11 +62,8 @@
 	display:grid;
 	place-items: start;
 	grid-template-columns: 1fr .5fr 2fr;
-	padding:0;
+	padding:10% 0px;
 	max-width:310px;
-	font-size:12pt;
-	color: steelblue;
-	text-shadow: 4px 4px 2px rgba(0,0,0,0.2);
 }
 
 a {

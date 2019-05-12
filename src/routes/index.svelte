@@ -24,7 +24,7 @@
 			<h4>fullstack developer with trial & errors available @</h4>
 			<div class="projectList">
 				{#each listDetails as item,i}
-					<div>{item[0]}</div><div>-</div><div><a href={item[1]} target="_blank">{item[2]}</a></div> 
+					<div>{item[0]}</div><div>-</div><div><a rel="noopener, preconnect" href={item[1]} target="_blank">{item[2]}</a></div> 
 				{/each}
 			</div>
 		</div>
@@ -33,6 +33,8 @@
 <style>
 .mainContainer {
 	height:87vh;
+	color: #333;
+	font-weight:500;	
 }
 
 .main {
@@ -61,7 +63,7 @@
 
 .profilePhotoPara {
 	text-align: center;
-	font-size:70%;
+	font-size:80%;
 	width:40%;
 }
 
@@ -78,7 +80,6 @@
 	padding:0;
 	max-width:310px;
 	font-size:80%;
-	color: slategray;
 }
 
 a {
