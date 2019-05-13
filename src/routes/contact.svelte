@@ -45,7 +45,7 @@
 	{#if visible}
 		<div class="contactDetails" >
 			{#each listDetails as item,i}
-				<div>{item[0]}</div><div>=></div><div><a href={item[1]} target="_blank">{item[2]}</a></div> 
+				<div>{item[0]}</div><div>=></div><div><a rel="noopener, preconnect" href={item[1]} target="_blank">{item[2]}</a></div> 
 			{/each}
 		</div>
 	{/if}

@@ -86,11 +86,11 @@
         {/if}
         <div class={"container " + getPosition(i)} data-content={(new Date(createdat)).toLocaleString('en-us', { month: 'short' })}>
           <div class="content" in:fly={getItemTransition(i)}>
-            <h3><a href={url} target="_blank">{name}</a></h3>
+            <h3><a rel="noopener, preconnect" href={url} target="_blank">{name}</a></h3>
             <p>{description}</p>
             <div class="contentFooter">
               <div>
-                {#if demourl !== "" } <a href={demourl} target="_blank" >demo</a>{/if}
+                {#if demourl !== "" } <a rel="noopener, preconnect" href={demourl} target="_blank" >demo</a>{/if}
               </div>
               <div>
                 <i>initiated @ {getReadableDate(createdat)}</i>
