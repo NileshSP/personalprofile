@@ -1,5 +1,8 @@
 <script >
 	import { fade, fly } from 'svelte/transition';
+	import { onMount } from "svelte";
+	import { pwaDeferredPrompt } from '../stores.js'
+
 	const listDetails = [
 		["repl.it", "https://repl.it/@NileshPatel", "repl.it/@NileshPatel"],
 		["codesandbox.io","https://codesandbox.io/u/NileshSP", "codesandbox.io/u/NileshSP"],
@@ -9,10 +12,24 @@
 
 	let deferredPrompt;
 
+	onMount(() => {
+		if($pwaDeferredPrompt !== null) {
+			deferredPrompt = $pwaDeferredPrompt;
+			btnInstallApp.style.display = 'block';
+		}
+	});
+
 	const handleInstall = (e) => {
 		e.preventDefault();
-		deferredPrompt = e;
-		//btnInstallApp.style.display = 'block';
+		//deferredPrompt = e;
+		if($pwaDeferredPrompt === null) {
+			deferredPrompt = e;
+			pwaDeferredPrompt.update(s => e);
+		}
+		else {
+			deferredPrompt = $pwaDeferredPrompt;
+		} 
+		btnInstallApp.style.display = 'block';
 	}
 
 	const installApp = (e) => {
@@ -25,7 +42,8 @@
 				} else {
 					console.log('User dismissed the A2HS prompt');
 				}
-				deferredPrompt = null;
+				//deferredPrompt = null;
+				pwaDeferredPrompt.update(s => null);
 			});
 	};
 
@@ -33,7 +51,8 @@
 <svelte:head>
 	<title>Nilesh - Bio</title>
 </svelte:head>
-<div class="mainContainer" in:fade="{{ delay : 500, duration: 1000}}" out:fade>
+<svelte:window on:beforeinstallprompt={handleInstall} on:appinstalled={() => console.log('app is installed by now')}/>
+<div class="mainContainer" on:load={handleInstall} in:fade="{{ delay : 500, duration: 1000}}" out:fade>
 	<h2 in:fly="{{ x: -300, duration: 2000 }}" >{`<p>bio</p>`}</h2>
 	<div class="main" in:fade >
 		<div class="profilePhoto">
@@ -53,7 +72,6 @@
 		<button id="btnInstallApp" class="installAppBanner" on:click={installApp}>Install app</button>
 	</div>
 </div>
-<svelte:window on:beforeinstallprompt={handleInstall} on:appinstalled={() => console.log('app is installed by now')}/>
 <style>
 .mainContainer {
 	height:87vh;
@@ -99,7 +117,7 @@
 	max-width:310px;
 	font-size:80%;
 }
-a {
+a, button {
 	cursor:hand;
 }
 .installAppBanner {
@@ -112,6 +130,12 @@ a {
 	background: transparent;
 	border-radius: 40px;
 	box-sizing: border-box;
+	transition: box-shadow 1s;
+	outline:none;
+}
+
+.installAppBanner:hover {
+	cursor: hand;
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 </style>
