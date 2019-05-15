@@ -50,6 +50,14 @@
 		display: block;
 		cursor:hand;
 	}
+
+	img {
+		transition: transform 500ms;
+	}
+
+	img:hover {
+		transform: scale(0.9);
+	}
 </style>
 
 <nav>
