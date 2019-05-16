@@ -38,6 +38,7 @@
 		deferredPrompt.userChoice
 			.then((choiceResult) => {
 				if (choiceResult.outcome === 'accepted') {
+					btnInstallApp.style.display = 'none';
 					console.log('User accepted the A2HS prompt');
 				} else {
 					console.log('User dismissed the A2HS prompt');
@@ -52,7 +53,7 @@
 	<title>Nilesh - Bio</title>
 </svelte:head>
 <svelte:window on:beforeinstallprompt={handleInstall} on:appinstalled={() => console.log('app is installed by now')}/>
-<div class="mainContainer" on:load={handleInstall} in:fade="{{ delay : 500, duration: 1000}}" out:fade>
+<div class="mainContainer" on:load={handleInstall} in:fade="{{ delay : 500, duration: 2000}}" out:fade>
 	<h2 in:fly="{{ x: -300, duration: 2000 }}" >{`<p>bio</p>`}</h2>
 	<div class="main" in:fade >
 		<div class="profilePhoto">
@@ -86,17 +87,11 @@
 	50% { transform: scale(1.05) };
 }
 
-@keyframes backgroundAnimationIn {
-	0% { opacity:0 };
-	50% { opacity:0.5 };
-	100% { opacity:1 };
-}
-
 .profilePhoto {
 	padding:2em 0em;
 	display:grid;
 	place-items: center;
-	animation: backgroundAnimationIn 2s, backgroundAnimation 3s infinite 2s;
+	animation: backgroundAnimation 3s infinite 2s;
 }
 .profilePhoto > img {
 	max-width: 50%;
