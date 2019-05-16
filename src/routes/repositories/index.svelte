@@ -8,6 +8,7 @@
         //   'Access-Control-Allow-Origin': '*',
         //   'Access-Control-Allow-Headers': "Origin, X-Requested-With, Content-Type, Accept"
         //  'Cache-Control': 'stale-while-revalidate=15'
+            "Accept":"application/vnd.github.mercy-preview+json"
          },
         mode: 'cors'      
       })
@@ -24,6 +25,7 @@
             , updatedat: r.updated_at
             , demourl:r.homepage
             , languages: r.language
+            , topics: r.topics
           }));
           preloadRepositories = preloadRepositories.sort(function(a, b) {
               var dateA = new Date(a.createdat), dateB = new Date(b.createdat);
@@ -79,7 +81,7 @@
   <h2 in:fly={{ y: -100, duration: 2000 }} out:fade>[...github repositories]</h2>
   <div class="main" out:fade>
     <div class="timeline">
-      {#each repositories as { id, name, url, description, createdat, updatedat, demourl, languages } ,i}
+      {#each repositories as { id, name, url, description, createdat, updatedat, demourl, languages, topics } ,i}
         {#if showYear(createdat)}
           <div class="containerYear" data-content={repositoryYear} in:fly="{{ y: -300, duration: duration }}">
           </div>
@@ -88,6 +90,7 @@
           <div class="content" in:fly={getItemTransition(i)}>
             <h3><a rel="noopener, preconnect" href={url} target="_blank">{name}</a></h3>
             <p>{description}</p>
+            <span class="topics">{topics.join(", ")}</span>
             <div class="contentFooter">
               <div>
                 {#if demourl !== "" } <a rel="noopener, preconnect" href={demourl} target="_blank" >demo</a>{/if}
@@ -105,7 +108,6 @@
 :root {
   --shadowValue : 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
-
 * {
   margin:0;
   padding:0;
@@ -114,21 +116,17 @@
   font-family: Helvetica, sans-serif;
   border:solid 0px red;
 }
-
 a {
 	color: rgb(0,100,200);
   text-decoration: none;
   cursor:hand;
 }
-
 a:hover {
 	text-decoration: underline;
 }
-
 a:visited {
 	color: rgb(0,80,160);
 }
-
 .main {
   background-color: transparent; 
   padding-top:40px;
@@ -217,34 +215,10 @@ a:visited {
   left: 50%;
 }
 
-
-/* Add arrows to the left container (pointing right) */
-/* .left::before {
-  content: " ";
-  height: 0;
-  position: absolute;
-  top: 22px;
-  width: 0;
-  z-index: 1;
-  right: 30px;
-  border: medium solid white;
-  border-width: 10px 0 10px 10px;
-  border-color: transparent transparent transparent white;
-} */
-
-/* Add arrows to the right container (pointing left) */
-/* .right::before {
-  content: " ";
-  height: 0;
-  position: absolute;
-  top: 22px;
-  width: 0;
-  z-index: 1;
-  left: 30px;
-  border: medium solid white;
-  border-width: 10px 10px 10px 0;
-  border-color: transparent white transparent transparent;
-} */
+.topics {
+  font-size: 90%;
+  color:brown;
+}
 
 /* Fix the circle for containers on the right side */
 .right::after {

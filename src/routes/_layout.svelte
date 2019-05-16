@@ -6,13 +6,13 @@
 
 <style>
 	.layoutContainer {
-		animation :color-change 5s linear infinite alternate both;
+		animation :color-change 3s linear infinite alternate both;
 		width:100%;
 		height:100%;
 	}
 
 	.nav {
-		animation :color-change 5s linear infinite alternate both;
+		animation :color-change 3s linear infinite alternate both;
 		position: sticky;
 		top:0;
 		display: grid;

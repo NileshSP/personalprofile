@@ -85,11 +85,18 @@
 @keyframes backgroundAnimation {
 	50% { transform: scale(1.05) };
 }
+
+@keyframes backgroundAnimationIn {
+	0% { opacity:0 };
+	50% { opacity:0.5 };
+	100% { opacity:1 };
+}
+
 .profilePhoto {
 	padding:2em 0em;
 	display:grid;
 	place-items: center;
-	animation: backgroundAnimation 3s infinite;
+	animation: backgroundAnimationIn 2s, backgroundAnimation 3s infinite 2s;
 }
 .profilePhoto > img {
 	max-width: 50%;
