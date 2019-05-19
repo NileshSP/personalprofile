@@ -1,5 +1,4 @@
 <script>
-  import { onMount } from "svelte";
   import { fade, fly, slide } from 'svelte/transition';
 
 	let visible = false;
@@ -32,37 +31,36 @@
 		};
 	}
 
-	onMount(() => {
-		visible=true; 
-		//console.log(windowWidth);
-	});
 </script>
 <svelte:head>
 	<title>Nilesh - Contact</title>
 </svelte:head>
 <div class="mainContainer" in:fade="{{ delay : 500, duration: 1000}}" out:fade>
 	<h2 in:fly="{{ y: 200, duration: 2000 }}" >{`<a>contact me</a>`}</h2>
-	{#if visible}
 		<div class="contactDetails" >
 			{#each listDetails as item,i}
-				<div>{item[0]}</div><div>=></div><div><a rel="noopener, preconnect" href={item[1]} target="_blank">{item[2]}</a></div> 
+				<div>{item[0]}</div>
+				<div>=></div>
+				<div>
+					<a rel="noopener, preconnect" href={item[1]} target="_blank">{item[2]}</a>
+				</div> 
 			{/each}
 		</div>
-	{/if}
 </div>
 <style>
 .mainContainer {
-	height:87vh;
 	color: #333;
-	font-weight:500;	
+	font-weight:500;
 }
-
+h2 {
+	padding: 0 0 0 1.5rem;
+}
 .contactDetails {
 	margin: 0 auto;
+	padding:2rem;
 	display:grid;
 	place-items: start;
 	grid-template-columns: 1fr .5fr 2fr;
-	padding:10% 0px;
 	max-width:310px;
 	font-size: 80%;
 	animation: backgroundAnimation 2s;

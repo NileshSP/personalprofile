@@ -4,7 +4,7 @@
         method:'GET',
          headers:{
         //   'Content-Type': 'application/json',
-        //   'access_token': '6fe0b217842e21060cb3ff56ed7df9c41d1198d2',
+        //   'Authorization': 'Token c7b388cf1ffa13b99213d593419c430f82a66e5a',
         //   'Access-Control-Allow-Origin': '*',
         //   'Access-Control-Allow-Headers': "Origin, X-Requested-With, Content-Type, Accept"
         //  'Cache-Control': 'stale-while-revalidate=15'
@@ -14,8 +14,8 @@
       })
       .then(response => response.json())
       .then(data => {
-        let preloadRepositories;
-        if(data !== null || undefined) {
+        let preloadRepositories = [];
+        if(Array.isArray(data)) {
           preloadRepositories = data.map(r => ({
             id : r.id
             , name: r.name
@@ -32,6 +32,9 @@
               return dateB - dateA;
           });
           //console.log(repositories);
+        }
+        else {
+          console.log(`Github API responded with irrelevant data : `,data)
         }
         return { preloadRepositories };
     })  
@@ -114,7 +117,9 @@
   bottom:10px;
   box-sizing: border-box;
   font-family: Helvetica, sans-serif;
-  border:solid 0px red;
+}
+h2 {
+	padding: 0 0 0 1.5rem;
 }
 a {
 	color: rgb(0,100,200);

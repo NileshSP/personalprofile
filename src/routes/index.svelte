@@ -79,6 +79,9 @@
 	color: #333;
 	font-weight:500;
 }
+h2 {
+	padding: 0 0 0 1.5rem;
+}
 .main {
 	display:grid;
 	place-items: center;
@@ -86,7 +89,6 @@
 @keyframes backgroundAnimation {
 	50% { transform: scale(1.05) };
 }
-
 .profilePhoto {
 	padding:2em 0em;
 	display:grid;
@@ -135,7 +137,6 @@ a, button {
 	transition: box-shadow 1s;
 	outline:none;
 }
-
 .installAppBanner:hover {
 	cursor: hand;
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
