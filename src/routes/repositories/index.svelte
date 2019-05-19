@@ -114,12 +114,15 @@
 * {
   margin:0;
   padding:0;
-  bottom:10px;
   box-sizing: border-box;
   font-family: Helvetica, sans-serif;
+  background-color: inherit; 
 }
 h2 {
-	padding: 0 0 0 1.5rem;
+	padding: 0 0 0 10%;
+	background: linear-gradient(180deg, orange , red);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 a {
 	color: rgb(0,100,200);
@@ -133,8 +136,10 @@ a:visited {
 	color: rgb(0,80,160);
 }
 .main {
-  background-color: transparent; 
-  padding-top:40px;
+  padding:20px 0px;
+  margin: 0 auto;
+  max-width: 800px;
+  border:solid 0px red;
 }
 
 /* The actual timeline (the vertical ruler) */
@@ -159,7 +164,6 @@ a:visited {
 .containerYear {
   padding: 60px 60px;
   position: relative;
-  background-color: inherit;
   width: 50%;
   z-index: 1;
   color:black;
