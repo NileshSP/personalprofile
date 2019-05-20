@@ -3,10 +3,10 @@
 
 	let visible = false;
 	const listDetails = [
-		["linkedIn", "https://www.linkedin.com/in/nileshspatel", "linkedin.com/in/nileshspatel"],
-		["email", "mailto:emailnileshp@gmail.com", "emailnileshp@gmail.com"],
-		["call/msg", "tel:+1-647-219-3220", "+1-647-219-3220"],
-		["github", "https://github.com/NileshSP", "github.com/NileshSP"]
+		["linkedIn", "https://www.linkedin.com/in/nileshspatel", "linkedin.com/in/nileshspatel", "web"],
+		["email", "mailto:emailnileshp@gmail.com", "emailnileshp@gmail.com", "app"],
+		["call/msg", "tel:+1-647-219-3220", "+1-647-219-3220", "app"],
+		["github", "https://github.com/NileshSP", "github.com/NileshSP", "web"]
 	]
  
 	function typewriter(node, { speed = 50 }) {
@@ -38,11 +38,15 @@
 <div class="mainContainer" in:fade="{{ delay : 500, duration: 1000}}" out:fade>
 	<h2 in:fly="{{ y: 200, duration: 2000 }}" >{`<a>contact me</a>`}</h2>
 		<div class="contactDetails" >
-			{#each listDetails as item,i}
-				<div>{item[0]}</div>
+			{#each listDetails as [name, link, display, type],i}
+				<div>{name}</div>
 				<div>=></div>
 				<div>
-					<a rel="noopener, preconnect" href={item[1]} target="_blank">{item[2]}</a>
+					<a rel="noopener, preconnect" 
+						href={link} 
+						target={type === "web" ? "_blank" : "_self"}>
+						{display}
+					</a>
 				</div> 
 			{/each}
 		</div>
