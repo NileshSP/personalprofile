@@ -84,6 +84,7 @@ h2 {
 	background: linear-gradient(180deg, orange , red);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 .main {
 	display:grid;
@@ -107,6 +108,7 @@ h2 {
 	background: linear-gradient(120deg, white ,coral);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 .profilePhotoPara {
 	text-align: center;

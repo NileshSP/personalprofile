@@ -123,6 +123,7 @@ h2 {
 	background: linear-gradient(180deg, orange , red);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 a {
 	color: rgb(0,100,200);
