@@ -118,6 +118,7 @@
 		padding: 1em 0.5em;
 		display: block;
 		cursor:hand;
+		outline: none;
 	}
 
 	/*img {
