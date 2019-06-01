@@ -10,16 +10,21 @@
 		["runkit.com","https://runkit.com/nileshsp","runkit.com/nileshsp"]
 	]
 
-	let deferredPrompt;
+
+	let deferredPrompt; 
+	let componentVisible = false; 
+	let btnInstallAppVisible = false;
 
 	onMount(() => {
 		if($pwaDeferredPrompt !== null) {
 			deferredPrompt = $pwaDeferredPrompt;
-			btnInstallApp.style.display = 'block';
+			btnInstallAppVisible = true;
 		}
+		setTimeout(() => componentVisible = true, 100);
 	});
 
 	const handleInstall = (e) => {
+		console.log(`app install called`)
 		e.preventDefault();
 		//deferredPrompt = e;
 		if($pwaDeferredPrompt === null) {
@@ -29,16 +34,17 @@
 		else {
 			deferredPrompt = $pwaDeferredPrompt;
 		} 
-		btnInstallApp.style.display = 'block';
+		btnInstallAppVisible = true;
+		console.log(`app install call complete`)
 	}
 
 	const installApp = (e) => {
-		btnInstallApp.style.display = 'none';
+		btnInstallAppVisible = false;
 		deferredPrompt.prompt();
 		deferredPrompt.userChoice
 			.then((choiceResult) => {
 				if (choiceResult.outcome === 'accepted') {
-					btnInstallApp.style.display = 'none';
+					btnInstallAppVisible = false;
 					console.log('User accepted the A2HS prompt');
 				} else {
 					console.log('User dismissed the A2HS prompt');
@@ -53,6 +59,7 @@
 	<title>Nilesh - Bio</title>
 </svelte:head>
 <svelte:window on:beforeinstallprompt={handleInstall} on:appinstalled={() => console.log('app is installed by now')}/>
+{#if componentVisible }
 <div class="mainContainer" on:load={handleInstall} in:fade="{{ delay : 500, duration: 2000}}" out:fade>
 	<h2 in:fly="{{ x: -300, duration: 2000 }}" >{`<p>bio</p>`}</h2>
 	<div class="main" in:fade >
@@ -70,9 +77,10 @@
 				{/each}
 			</div>
 		</div>
-		<button id="btnInstallApp" class="installAppBanner" on:click={installApp}>Install app</button>
+		<button id="btnInstallAppref" class="installAppBanner" on:click={installApp} style={'display :' + (btnInstallAppVisible ? 'block' : 'none')} >Install app</button>
 	</div>
 </div>
+{/if}
 <style>
 .mainContainer {
 	height:87vh;
@@ -133,7 +141,6 @@ a, button {
 	cursor:hand;
 }
 .installAppBanner {
-	display:none;
 	cursor: hand;
 	border: solid 0px orange;
 	margin:0;
