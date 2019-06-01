@@ -142,7 +142,7 @@ a, button {
 }
 .installAppBanner {
 	cursor: hand;
-	border: solid 0px orange;
+	border: solid 0px steelblue;
 	margin:0;
 	padding:5px;
 	font-size: 8pt;
@@ -151,9 +151,32 @@ a, button {
 	box-sizing: border-box;
 	transition: box-shadow 1s;
 	outline:none;
+	z-index:1;
+	position:relative;
 }
 .installAppBanner:hover {
 	cursor: hand;
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	/* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
+	color:white;
+}
+
+.installAppBanner::after {
+	content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+	border-radius: 40px;
+  background: orange;
+  z-index: -1;
+  transition: transform 200ms ease-in;
+	transform: scale(0);
+  /* transform-origin: bottom right; */
+}
+
+.installAppBanner:hover::after {
+ transform: scale(1);
+  /* transform-origin: top left; */
 }
 </style>

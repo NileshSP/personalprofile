@@ -97,7 +97,27 @@
 	li {
 		display: block;
 		padding:0 15px 0 15px;
+		position:relative;
 	}
+
+	li::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		width: 100%;
+		height: 1px;
+		background: orange;	
+		transform: scaleX(0);
+		transform-origin: right;
+		transition: transform 250ms ease-in;	
+	}
+
+	li:hover::after {
+		transform: scaleX(1);
+  	transform-origin: left;
+	}
+
 	.selected {
 		position: relative;
 		display: inline-block;
