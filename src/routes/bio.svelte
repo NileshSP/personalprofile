@@ -4,12 +4,12 @@
 	import { pwaDeferredPrompt } from '../stores.js'
 
 	const listDetails = [
+		["codepen.io", "https://codepen.io/nileshsp/", "codepen.io/nileshsp"],
 		["repl.it", "https://repl.it/@NileshPatel", "repl.it/@NileshPatel"],
 		["codesandbox.io","https://codesandbox.io/u/NileshSP", "codesandbox.io/u/NileshSP"],
 		["stackblitz.com","https://stackblitz.com/@NileshSP", "stackblitz.com/@NileshSP"],
 		["runkit.com","https://runkit.com/nileshsp","runkit.com/nileshsp"]
 	]
-
 
 	let deferredPrompt; 
 	let componentVisible = false; 
@@ -72,12 +72,12 @@
 		<div class="projects" >
 			<h4>polygot developer with trial & errors available @</h4>
 			<div class="projectList">
-				{#each listDetails as item,i}
-					<div>{item[0]}</div><div>-</div><div><a rel="noopener, preconnect" href={item[1]} target="_blank">{item[2]}</a></div> 
+				{#each listDetails as [name, link, linktext],i}
+					<div>{name}</div><div>-</div><div><a rel="noopener, preconnect" href={link} target="_blank">{linktext}</a></div> 
 				{/each}
 			</div>
 		</div>
-		<button id="btnInstallAppref" class="installAppBanner" on:click={installApp} style={'display :' + (btnInstallAppVisible ? 'block' : 'none')} >Install app</button>
+		<button id="btnInstallApp" class="installAppBanner" on:click={installApp} style={'display :' + (btnInstallAppVisible ? 'block' : 'none')} >Install app</button>
 	</div>
 </div>
 {/if}
