@@ -119,7 +119,7 @@
   background-color: inherit; 
 }
 h2 {
-	padding: 0 0 0 10%;
+	padding: 5% 0 0 10%;
 	background: linear-gradient(180deg, orange , red);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -137,7 +137,7 @@ a:visited {
 	color: rgb(0,80,160);
 }
 .main {
-  padding:20px 0px;
+  padding:50px 0px;
   margin: 0 auto;
   max-width: 800px;
   border:solid 0px red;

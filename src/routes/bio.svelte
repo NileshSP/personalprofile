@@ -88,7 +88,7 @@
 	font-weight:500;
 }
 h2 {
-	padding: 0 0 0 10%;
+	padding: 5% 0 0 10%;
 	background: linear-gradient(180deg, orange , red);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
