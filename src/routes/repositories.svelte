@@ -23,7 +23,10 @@
             , description: r.description
             , createdat: r.created_at
             , updatedat: r.updated_at
-            , demourl:r.homepage
+            , demourl:((r.homepage !== null || undefined) 
+                          ? (r.homepage.toString().trim() !== ("null" || "") ? r.homepage : "")
+                          : ""
+                      ) 
             , languages: r.language
             , topics: r.topics
           }));
