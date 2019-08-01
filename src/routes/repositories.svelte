@@ -1,23 +1,10 @@
 <script context="module">
 	export function preload({ params, query }) {
-      // return this.fetch("https://api.github.com/graphql", {
-      //   method:'POST'
-      //   ,'headers':{
-      //       "content-type":"application/json"
-      //       // ,"Authorization": "Token c7b388cf1ffa13b99213d593419c430f82a66e5a"
-      //       // ,'Access-Control-Allow-Origin': '*'
-      //       // ,'Access-Control-Allow-Headers': "Origin, X-Requested-With, Content-Type, Accept"
-      //       // ,'Cache-Control': 'stale-while-revalidate=15'
-      //       //,"Accept":"application/vnd.github.mercy-preview+json"
-      //   }
-      //   ,'body':"{\"query\":\"query {\\n  user(login:\\\"nileshsp\\\") {\\n\\t\\trepositories(first: 100) {\\n      nodes {\\n\\t\\t\\t\\tid\\n        name\\n        url\\n        description\\n        createdAt\\n        updatedAt\\n        homepageUrl \\n        languages(first:100) {\\n          nodes {\\n            name\\n          }\\n        }\\n        repositoryTopics(first:100) {\\n          nodes {\\n            topic {\\n              name\\n            }\\n          }\\n        } \\n      }\\n    }\\n  }\\n}\",\"variables\":{}}"
-      //   ,'mode':"cors"
-      // })
       return this.fetch(`https://api.github.com/users/NileshSP/repos`, {
         method:'GET',
          headers:{
         //   'Content-Type': 'application/json',
-        //   'Authorization': 'Token c7b388cf1ffa13b99213d593419c430f82a66e5a',
+        //   'Authorization': 'Token process.env.GITHUB_TOKEN',
         //   'Access-Control-Allow-Origin': '*',
         //   'Access-Control-Allow-Headers': "Origin, X-Requested-With, Content-Type, Accept"
         //  'Cache-Control': 'stale-while-revalidate=15'
@@ -25,15 +12,27 @@
          },
         mode: 'cors'      
       })
+      // return this.fetch("https://api.github.com/graphql", {
+      //   method:'POST'
+      //   ,'headers':{
+      //       "content-type":"application/json"
+      //       ,"Authorization": `bearer process.env.GITHUB_TOKEN`
+      //       // ,'Access-Control-Allow-Origin': '*'
+      //       // ,'Access-Control-Allow-Headers': "Origin, X-Requested-With, Content-Type, Accept"
+      //       // ,'Cache-Control': 'stale-while-revalidate=15'
+      //       //,"Accept":"application/vnd.github.mercy-preview+json"
+      //   }
+      //   ,'body':"{\"query\":\"query($items:Int!) {\\n  user(login:\\\"nileshsp\\\") {\\n\\t\\trepositories(first: $items) {\\n      nodes {\\n\\t\\t\\t\\tid\\n        name\\n        url\\n        description\\n        createdAt\\n        updatedAt\\n        homepageUrl \\n        languages(first:$items) {\\n          nodes {\\n            name\\n          }\\n        }\\n        repositoryTopics(first:$items) {\\n          nodes {\\n            topic {\\n              name\\n            }\\n          }\\n        } \\n      }\\n    }\\n  }\\n}\",\"variables\":{\"items\":100}}"
+      //   ,'mode':"cors"
+      // })
       .then(response => response.json())
       .then(data => {
-        //console.log(`github response`,data)
         let preloadRepositories = [];
         if(data.message) {
           console.log(`github response`,data.message);
-          return;
+          return { preloadRepositories };
         }
-        if(data !== null &&  data !== undefined) { // Array.isArray(data)) {
+        if(data !== null &&  data !== undefined) { 
           // preloadRepositories = data.data.user.repositories.nodes.map(r => ({
           //   id : r.id
           //   , name: r.name
