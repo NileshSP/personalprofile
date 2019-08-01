@@ -1,5 +1,18 @@
 <script context="module">
 	export function preload({ params, query }) {
+      // return this.fetch("https://api.github.com/graphql", {
+      //   method:'POST'
+      //   ,'headers':{
+      //       "content-type":"application/json"
+      //       // ,"Authorization": "Token c7b388cf1ffa13b99213d593419c430f82a66e5a"
+      //       // ,'Access-Control-Allow-Origin': '*'
+      //       // ,'Access-Control-Allow-Headers': "Origin, X-Requested-With, Content-Type, Accept"
+      //       // ,'Cache-Control': 'stale-while-revalidate=15'
+      //       //,"Accept":"application/vnd.github.mercy-preview+json"
+      //   }
+      //   ,'body':"{\"query\":\"query {\\n  user(login:\\\"nileshsp\\\") {\\n\\t\\trepositories(first: 100) {\\n      nodes {\\n\\t\\t\\t\\tid\\n        name\\n        url\\n        description\\n        createdAt\\n        updatedAt\\n        homepageUrl \\n        languages(first:100) {\\n          nodes {\\n            name\\n          }\\n        }\\n        repositoryTopics(first:100) {\\n          nodes {\\n            topic {\\n              name\\n            }\\n          }\\n        } \\n      }\\n    }\\n  }\\n}\",\"variables\":{}}"
+      //   ,'mode':"cors"
+      // })
       return this.fetch(`https://api.github.com/users/NileshSP/repos`, {
         method:'GET',
          headers:{
@@ -14,8 +27,27 @@
       })
       .then(response => response.json())
       .then(data => {
+        //console.log(`github response`,data)
         let preloadRepositories = [];
-        if(Array.isArray(data)) {
+        if(data.message) {
+          console.log(`github response`,data.message);
+          return;
+        }
+        if(data !== null &&  data !== undefined) { // Array.isArray(data)) {
+          // preloadRepositories = data.data.user.repositories.nodes.map(r => ({
+          //   id : r.id
+          //   , name: r.name
+          //   , url: r.url
+          //   , description: r.description
+          //   , createdat: r.createdAt
+          //   , updatedat: r.updatedAt
+          //   , demourl:((r.homepageUrl !== null || undefined) 
+          //                 ? (r.homepageUrl.toString().trim() !== ("null" || "") ? r.homepageUrl : "")
+          //                 : ""
+          //             ) 
+          //   , languages: r.languages.nodes.map(x => x.name)
+          //   , topics: r.repositoryTopics.nodes.map(x => x.topic.name)
+          // }));
           preloadRepositories = data.map(r => ({
             id : r.id
             , name: r.name
@@ -34,7 +66,7 @@
               var dateA = new Date(a.createdat), dateB = new Date(b.createdat);
               return dateB - dateA;
           });
-          //console.log(repositories);
+          //console.log(preloadRepositories);
         }
         else {
           console.log(`Github API responded with irrelevant data : `,data)
@@ -87,27 +119,29 @@
   <h2 in:fly={{ y: -100, duration: 2000 }} out:fade>[...github repositories]</h2>
   <div class="main" out:fade>
     <div class="timeline">
-      {#each repositories as { id, name, url, description, createdat, updatedat, demourl, languages, topics } ,i}
-        {#if showYear(createdat)}
-          <div class="containerYear" data-content={repositoryYear} in:fly="{{ y: -300, duration: duration }}">
-          </div>
-        {/if}
-        <div class={"container " + getPosition(i)} data-content={(new Date(createdat)).toLocaleString('en-us', { month: 'short' })}>
-          <div class="content" in:fly={getItemTransition(i)}>
-            <h3><a rel="noopener, preconnect" href={url} target="_blank">{name}</a></h3>
-            <p>{description}</p>
-            <span class="topics">{topics.join(", ")}</span>
-            <div class="contentFooter">
-              <div>
-                {#if demourl !== "" } <a rel="noopener, preconnect" href={demourl} target="_blank" >demo</a>{/if}
-              </div>
-              <div>
-                <i>initiated @ {getReadableDate(createdat)}</i>
+      {#if repositories.length > 0}
+        {#each repositories as { id, name, url, description, createdat, updatedat, demourl, languages, topics } ,i}
+          {#if showYear(createdat)}
+            <div class="containerYear" data-content={repositoryYear} in:fly="{{ y: -300, duration: duration }}">
+            </div>
+          {/if}
+          <div class={"container " + getPosition(i)} data-content={(new Date(createdat)).toLocaleString('en-us', { month: 'short' })}>
+            <div class="content" in:fly={getItemTransition(i)}>
+              <h3><a rel="noopener, preconnect" href={url} target="_blank">{name}</a></h3>
+              <p>{description}</p>
+              <span class="topics">{topics.concat(languages).join(", ")}</span>
+              <div class="contentFooter">
+                <div>
+                  {#if demourl !== "" } <a rel="noopener, preconnect" href={demourl} target="_blank" >demo</a>{/if}
+                </div>
+                <div>
+                  <i>initiated @ {getReadableDate(createdat)}</i>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      {/each}
+        {/each}
+      {/if}
     </div>
   </div>
 <style>
