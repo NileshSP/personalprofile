@@ -1,4 +1,7 @@
 import { timestamp, files, shell, routes } from '@sapper/service-worker';
+/* eslint-disable no-undef */
+/* eslint-disable no-restricted-globals */
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.1.1/workbox-sw.js');
 
 const ASSETS = `NileshProfile${timestamp}`;
 
@@ -11,9 +14,7 @@ self.addEventListener('install', event => {
 		caches
 			.open(ASSETS)
 			.then(cache => cache.addAll(to_cache))
-			.then(() => {
-				self.skipWaiting()
-			})
+			.then(() => self.skipWaiting())
 	);
 });
 
@@ -30,29 +31,25 @@ self.addEventListener('activate', event => {
 	);
 });
 
-/* eslint-disable no-undef */
-/* eslint-disable no-restricted-globals */
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.1.1/workbox-sw.js');
 
 const { strategies, backgroundSync, cacheableResponse } = workbox;
-const publicUrl = `http`;//`${self.location.origin}`;
-//console.log(`public url: ${publicUrl}`)
+
 const bgSyncPlugin = new backgroundSync.Plugin('NileshProfileFetchQueue', {
   maxRetentionTime: 24 * 60 // Retry for max of 24 Hours
 });
+
 const strategyToApply = new strategies.StaleWhileRevalidate({
   cacheName: ASSETS,
   plugins:[
     bgSyncPlugin,
-    // cacheableResponse.Plugin({
-    //   statuses: [0,200]
-    // })
+    new cacheableResponse.Plugin({
+      statuses: [0,200]
+    })
   ]
 });
 
-workbox.core.skipWaiting();
-
-workbox.core.clientsClaim();
+// workbox.core.skipWaiting();
+// workbox.core.clientsClaim();
 
 const graphqlUpdateCache = async (event, cachesName) => {
 	console.log(`graphqlUpdateCache started`)
@@ -61,13 +58,13 @@ const graphqlUpdateCache = async (event, cachesName) => {
 	const regExMatch = /getRequest\w+/gi.exec(currReqBody);
 	const cacheName = regExMatch[0] ? regExMatch[0] : null;
 	console.log(`graphqlUpdateCache cachename`, cacheName)
-	return caches.open(cachesName).then(function (cache) {
+	return caches.open(cachesName).then((cache) => {
 		console.log(`graphqlUpdateCache ${cachesName} opened`)
 		return fetch(event.request)
-						.then(function (response) {
+						.then((response) => {
 							console.log(`graphqlUpdateCache fetch response received`)
 							if (cacheName) {
-								return cache.put(cacheName, response.clone()).then(function () {
+								return cache.put(cacheName, response.clone()).then(() => {
 									console.log(`graphqlUpdateCache cache ${cacheName} updated and response is returned`)
 									return response;
 								});
@@ -100,14 +97,15 @@ const graphqlFromCache = async (event, cachesName, cacheName) => {
 }
 
 const refreshClient = (response) => {
-  return self.clients.matchAll().then(function (clients) {
-    clients.forEach(function (client) {
+  return self.clients.matchAll().then((clients) => {
+    clients.forEach((client) => {
       var message = {
         type: 'refresh',
         url: response.url,
         eTag: response.headers.get('ETag')
       };
       client.postMessage(JSON.stringify(message));
+			self.clients.claim();
     });
   });
 }
@@ -117,7 +115,6 @@ workbox.routing.registerRoute(
   async ({url, event, params}) => {
 		console.log(`router for graphql is being processed with respondWith`)
 		event.respondWith(graphqlUpdateCache(event, ASSETS));
-		// console.log(`router for graphql is being processed to waitUntil`)
 		// event.waitUntil(graphqlUpdateCache(event, ASSETS).then(refreshClient));
 	},
 	'POST'
@@ -132,5 +129,5 @@ workbox.routing.registerRoute(
 
 self.addEventListener('fetch', (event) => {
 	console.log(`addEventListener:fetch - with strategyToApply `)
-	event.respondWith(strategyToApply.makeRequest({request: event.request}));
+	return event.waitUntil(strategyToApply.makeRequest({request: event.request}));
 });
