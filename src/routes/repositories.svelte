@@ -1,30 +1,19 @@
 <script context="module">
-	export function preload({ params, query }) {
-      return this.fetch(`https://api.github.com/users/NileshSP/repos`, {
+	export async function preload({ params, query }) {
+      const getAccessToken = await this.fetch(`https://gist.githubusercontent.com/NileshSP/19bbe3945375eb10d625a980f0da93a1/raw/0c6accc1cb1594603e472ea59efdda8b8f243b94/accessValues.json`, {
         method:'GET',
-         headers:{
-        //   'Content-Type': 'application/json',
-        //   'Authorization': 'Token process.env.GITHUB_TOKEN',
-        //   'Access-Control-Allow-Origin': '*',
-        //   'Access-Control-Allow-Headers': "Origin, X-Requested-With, Content-Type, Accept"
-        //  'Cache-Control': 'stale-while-revalidate=15'
-            "Accept":"application/vnd.github.mercy-preview+json"
-         },
         mode: 'cors'      
+      });
+      const accessToken = await getAccessToken.json();
+      return this.fetch("https://api.github.com/graphql", {
+        method:'POST'
+        ,'headers':{
+            'content-type':"application/json"
+            ,'Authorization': `bearer ${accessToken.githubAccessToken}`,
+        }
+        ,'body':"{\"query\":\"query($items:Int!) {\\n  getRequestRepos : user(login:\\\"nileshsp\\\") {\\n\\t\\trepositories(first: $items) {\\n      nodes {\\n\\t\\t\\t\\tid\\n        name\\n        url\\n        description\\n        createdAt\\n        updatedAt\\n        homepageUrl \\n        languages(first:$items) {\\n          nodes {\\n            name\\n          }\\n        }\\n        repositoryTopics(first:$items) {\\n          nodes {\\n            topic {\\n              name\\n            }\\n          }\\n        } \\n      }\\n    }\\n  }\\n}\",\"variables\":{\"items\":100}}"
+        ,'mode':"cors"
       })
-      // return this.fetch("https://api.github.com/graphql", {
-      //   method:'POST'
-      //   ,'headers':{
-      //       "content-type":"application/json"
-      //       ,"Authorization": `bearer process.env.GITHUB_TOKEN`
-      //       // ,'Access-Control-Allow-Origin': '*'
-      //       // ,'Access-Control-Allow-Headers': "Origin, X-Requested-With, Content-Type, Accept"
-      //       // ,'Cache-Control': 'stale-while-revalidate=15'
-      //       //,"Accept":"application/vnd.github.mercy-preview+json"
-      //   }
-      //   ,'body':"{\"query\":\"query($items:Int!) {\\n  user(login:\\\"nileshsp\\\") {\\n\\t\\trepositories(first: $items) {\\n      nodes {\\n\\t\\t\\t\\tid\\n        name\\n        url\\n        description\\n        createdAt\\n        updatedAt\\n        homepageUrl \\n        languages(first:$items) {\\n          nodes {\\n            name\\n          }\\n        }\\n        repositoryTopics(first:$items) {\\n          nodes {\\n            topic {\\n              name\\n            }\\n          }\\n        } \\n      }\\n    }\\n  }\\n}\",\"variables\":{\"items\":100}}"
-      //   ,'mode':"cors"
-      // })
       .then(response => response.json())
       .then(data => {
         let preloadRepositories = [];
@@ -33,33 +22,19 @@
           return { preloadRepositories };
         }
         if(data !== null &&  data !== undefined) { 
-          // preloadRepositories = data.data.user.repositories.nodes.map(r => ({
-          //   id : r.id
-          //   , name: r.name
-          //   , url: r.url
-          //   , description: r.description
-          //   , createdat: r.createdAt
-          //   , updatedat: r.updatedAt
-          //   , demourl:((r.homepageUrl !== null || undefined) 
-          //                 ? (r.homepageUrl.toString().trim() !== ("null" || "") ? r.homepageUrl : "")
-          //                 : ""
-          //             ) 
-          //   , languages: r.languages.nodes.map(x => x.name)
-          //   , topics: r.repositoryTopics.nodes.map(x => x.topic.name)
-          // }));
-          preloadRepositories = data.map(r => ({
+          preloadRepositories = data.data.getRequestRepos.repositories.nodes.map(r => ({
             id : r.id
             , name: r.name
-            , url: r.html_url
+            , url: r.url
             , description: r.description
-            , createdat: r.created_at
-            , updatedat: r.updated_at
-            , demourl:((r.homepage !== null || undefined) 
-                          ? (r.homepage.toString().trim() !== ("null" || "") ? r.homepage : "")
+            , createdat: r.createdAt
+            , updatedat: r.updatedAt
+            , demourl:((r.homepageUrl !== null || undefined) 
+                          ? (r.homepageUrl.toString().trim() !== ("null" || "") ? r.homepageUrl : "")
                           : ""
                       ) 
-            , languages: r.language
-            , topics: r.topics
+            , languages: r.languages.nodes.map(x => x.name)
+            , topics: r.repositoryTopics.nodes.map(x => x.topic.name)
           }));
           preloadRepositories = preloadRepositories.sort(function(a, b) {
               var dateA = new Date(a.createdat), dateB = new Date(b.createdat);
