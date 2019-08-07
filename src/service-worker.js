@@ -1,7 +1,7 @@
 import { timestamp, files, shell, routes } from '@sapper/service-worker';
 /* eslint-disable no-undef */
 /* eslint-disable no-restricted-globals */
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.1.1/workbox-sw.js');
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js');
 
 const ASSETS = `NileshProfile${timestamp}`;
 
@@ -31,103 +31,90 @@ self.addEventListener('activate', event => {
 	);
 });
 
-
-const { strategies, backgroundSync, cacheableResponse } = workbox;
-
-const bgSyncPlugin = new backgroundSync.Plugin('NileshProfileFetchQueue', {
-  maxRetentionTime: 24 * 60 // Retry for max of 24 Hours
-});
-
-const strategyToApply = new strategies.StaleWhileRevalidate({
-  cacheName: ASSETS,
-  plugins:[
-    bgSyncPlugin,
-    new cacheableResponse.Plugin({
-      statuses: [0,200]
-    })
-  ]
-});
-
-// workbox.core.skipWaiting();
-// workbox.core.clientsClaim();
-
-const graphqlUpdateCache = async (event, cachesName) => {
-	console.log(`graphqlUpdateCache started`)
-	const currReq = await event.request.clone();
-	const currReqBody = await currReq.text();
-	const regExMatch = /getRequest\w+/gi.exec(currReqBody);
-	const cacheName = regExMatch[0] ? regExMatch[0] : null;
-	console.log(`graphqlUpdateCache cachename`, cacheName)
-	return caches.open(cachesName).then((cache) => {
-		console.log(`graphqlUpdateCache ${cachesName} opened`)
-		return fetch(event.request)
-						.then((response) => {
-							console.log(`graphqlUpdateCache fetch response received`)
-							if (cacheName) {
-								return cache.put(cacheName, response.clone()).then(() => {
-									console.log(`graphqlUpdateCache cache ${cacheName} updated and response is returned`)
-									return response;
-								});
-							}
-							else {
-								console.log(`graphqlUpdateCache cache ${cacheName} is not updated and response is returned`)
-								return response;
-							}
-						})
-						.catch(async err => {
-							console.log(`graphqlUpdateCache fetch error`, err)								
-							return await graphqlFromCache(event, cachesName, cacheName)
-						});
+if(workbox) {
+	const { strategies, backgroundSync, cacheableResponse } = workbox;
+	
+	const bgSyncPlugin = new backgroundSync.Plugin('NileshProfileFetchQueue', {
+		maxRetentionTime: 24 * 60 // Retry for max of 24 Hours
 	});
-}
 
-const graphqlFromCache = async (event, cachesName, cacheName) => {
-	console.log(`graphqlFromCache started with cachename`, cacheName)
-	if(cacheName) {
+	const strategyToApply = new strategies.StaleWhileRevalidate({
+		cacheName: ASSETS,
+		plugins:[
+			bgSyncPlugin,
+			new cacheableResponse.Plugin({
+				statuses: [0,200]
+			})
+		]
+	});
+
+	const graphqlUpdateCache = async (event, cachesName) => {
+		const currReq = await event.request.clone();
+		const currReqBody = await currReq.text();
+		const regExMatch = /getRequest\w+/gi.exec(currReqBody);
+		const cacheName = regExMatch.length > 0 ? regExMatch[0] : null;
 		return caches.open(cachesName).then(async (cache) => {
-			console.log(`graphqlFromCache finding ${cacheName} in ${cachesName}`)
-			const reqCache = await cache.match(cacheName);
-			console.log(`graphqlFromCache cache found as,`, reqCache)
-			return reqCache || new Response(new Blob(), {status: 404, statusText: "not found in cache"}) ;
+			try {			
+				return await fetch(event.request)
+								.then((response) => {
+									if (cacheName) {
+										return cache.put(cacheName, response.clone()).then(() => {
+											return response;
+										});
+									}
+									else {
+										return response;
+									}
+								})
+		} catch (error) {					
+				return await graphqlFromCache(event, cachesName, cacheName)
+			}
 		});
 	}
-	else {
-		console.log(`graphqlFromCache cache with name as ${cacheName} not found in ${cachesName}`)
+
+	const graphqlFromCache = async (event, cachesName, cacheName) => {
+		if(cacheName) {
+			return caches.open(cachesName).then(async (cache) => {
+				const reqCache = await cache.match(cacheName);
+				return reqCache || new Response(new Blob(), {status: 404, statusText: "not found in cache"}) ;
+			});
+		}
+		else {
+			console.log(`graphqlFromCache cache with name as ${cacheName} not found in ${cachesName}`)
+		}
 	}
+
+	const refreshClient = (response) => {
+		return self.clients.matchAll().then((clients) => {
+			clients.forEach((client) => {
+				var message = {
+					type: 'refresh',
+					url: response.url,
+					eTag: response.headers.get('ETag')
+				};
+				client.postMessage(JSON.stringify(message));
+				self.clients.claim();
+			});
+		});
+	}
+
+	const isGraphQlRequest = (url) => /graphql\b/gi.exec(url);
+
+	workbox.routing.registerRoute(
+		({ url, event }) => isGraphQlRequest(url),
+		async ({url, event, params}) => {
+			event.respondWith(graphqlUpdateCache(event, ASSETS));
+		},
+		'POST'
+		);
+		
+		workbox.routing.registerRoute(
+			({ url, event }) => /^http/gi.exec(url) && !isGraphQlRequest(url),
+		strategyToApply
+	);
+
+
+	self.addEventListener('fetch', (event) => {
+		return event.waitUntil(strategyToApply.makeRequest({request: event.request}));
+	});
 }
-
-const refreshClient = (response) => {
-  return self.clients.matchAll().then((clients) => {
-    clients.forEach((client) => {
-      var message = {
-        type: 'refresh',
-        url: response.url,
-        eTag: response.headers.get('ETag')
-      };
-      client.postMessage(JSON.stringify(message));
-			self.clients.claim();
-    });
-  });
-}
-
-workbox.routing.registerRoute(
-  ({ url, event }) => /graphql\b/gi.exec(url),
-  async ({url, event, params}) => {
-		console.log(`router for graphql is being processed with respondWith`)
-		event.respondWith(graphqlUpdateCache(event, ASSETS));
-		// event.waitUntil(graphqlUpdateCache(event, ASSETS).then(refreshClient));
-	},
-	'POST'
-);
-
-workbox.routing.registerRoute(
-	({ url, event }) => /^http/gi.exec(url) && !/graphql\b/gi.exec(url),
-	// new RegExp(`${publicUrl}`,'i'),
-  strategyToApply
-);
-
-
-self.addEventListener('fetch', (event) => {
-	console.log(`addEventListener:fetch - with strategyToApply `)
-	return event.waitUntil(strategyToApply.makeRequest({request: event.request}));
-});
