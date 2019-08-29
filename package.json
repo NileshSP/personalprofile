@@ -8,9 +8,9 @@
     "url": "https://github.com/NileshSP/personalprofile"
   },
   "scripts": {
-    "dev": "sapper dev",
-    "build": "sapper build --legacy",
-    "export": "sapper export --legacy --basepath /personalprofile",
+    "dev": "npx sapper dev",
+    "build": "npx sapper build --legacy",
+    "export": "npx sapper export --legacy --basepath /personalprofile",
     "start": "node __sapper__/build",
     "cy:run": "cypress run",
     "cy:open": "cypress open",
