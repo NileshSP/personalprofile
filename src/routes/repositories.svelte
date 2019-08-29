@@ -1,6 +1,6 @@
 <script context="module">
 	export async function preload({ params, query }) {
-      const getAccessToken = await this.fetch(`https://gist.githubusercontent.com/NileshSP/19bbe3945375eb10d625a980f0da93a1/raw/0c6accc1cb1594603e472ea59efdda8b8f243b94/accessValues.json`, {
+      const getAccessToken = await this.fetch(`https://gist.githubusercontent.com/NileshSP/19bbe3945375eb10d625a980f0da93a1/raw/cc1de90d2ffe796efd6168f31b99178a650d91db/tokens.json`, {
         method:'GET',
         mode: 'cors'      
       });
