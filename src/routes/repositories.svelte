@@ -73,14 +73,10 @@
   const getItemTransition = (val) => (getPosition(val) === 'left' ? { x: -100, duration: duration } : { x: 100, duration: duration })
   const showYear = (dateVal) => {
     const newYear = (new Date(dateVal)).getFullYear();
-    if (repositoryYear === null) {
+    if (repositoryYear === null || repositoryYear !== newYear) {
       repositoryYear = newYear;
       return true;
     } 
-    else if (repositoryYear !== newYear) {
-      repositoryYear = newYear;
-      return true;
-    }
     else {
       return false;
     }
@@ -96,7 +92,7 @@
       {#if repositories.length > 0}
         {#each repositories as { id, name, url, description, createdat, updatedat, demourl, languages, topics } ,i}
           {#if showYear(createdat)}
-            <div class="containerYear" data-content={repositoryYear} in:fly="{{ y: -300, duration: duration }}">
+            <div class="containerYear" data-content={(new Date(createdat)).getFullYear()} in:fly="{{ y: -300, duration: duration }}">
             </div>
           {/if}
           <div class={"container " + getPosition(i)} data-content={(new Date(createdat)).toLocaleString('en-us', { month: 'short' })}>
