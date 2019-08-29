@@ -25,9 +25,11 @@ jobs:
         npm install
         npm run build --if-present
         npm run predeploy
-        git config user.email "emailnileshp@gmail.com"
-        git config user.name "NileshSP"
-        npm run deploy
+
+    - name: Build and Deploy
+      uses: JamesIves/github-pages-deploy-action@master
       env:
-        CI: true
-        CD: true
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: __sapper__/export/personalprofile
+        BUILD_SCRIPT: npm install && npm run build && npm run predeploy
