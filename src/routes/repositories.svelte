@@ -7,12 +7,13 @@
       const accessToken = await getAccessToken.json(), 
       user = "nileshsp", items = 50, fork = false, fromdate = "2019-01-01T00:00:00Z",
       repoQuery = `
-      query ($user: String!, $items: Int!, $fork: Boolean!, $fromdate: DateTime!) {
+        query ($user: String!, $items: Int!, $fork: Boolean!, $fromdate: DateTime!) {
           getRequestRepos: user(login: $user) {
             repositories(first: $items, isFork: $fork) {
               nodes {
                 id
                 name
+  			        nameWithOwner
                 url
                 description
                 createdAt
@@ -33,31 +34,30 @@
               }
             }
             contributionsCollection(from: $fromdate ) {
-              issueContributionsByRepository(maxRepositories:$items) {
-                contributions(first:$items) {
-                  nodes {
-                    issue {
-                      title
+              issueContributions( first: $items, orderBy: { field : OCCURRED_AT, direction: DESC}) {
+                nodes {
+                  issue {
+                    title
+                    url
+                    createdAt
+                    repository {
+                      id
+                      name
+        			        nameWithOwner
                       url
+                      description
                       createdAt
-                      repository {
-                        id
-                        name
-                        url
-                        description
-                        createdAt
-                        updatedAt
-                        homepageUrl
-                        languages(first: $items) {
-                          nodes {
-                            name
-                          }
+                      updatedAt
+                      homepageUrl
+                      languages(first: $items) {
+                        nodes {
+                          name
                         }
-                        repositoryTopics(first: $items) {
-                          nodes {
-                            topic {
-                              name
-                            }
+                      }
+                      repositoryTopics(first: $items) {
+                        nodes {
+                          topic {
+                            name
                           }
                         }
                       }
@@ -65,38 +65,37 @@
                   }
                 }
               }
-              pullRequestContributionsByRepository(excludeFirst: true){
-                contributions(first:$items) {
-                  nodes {
-                    pullRequest {
-                      title
+              pullRequestContributions( first: $items, excludeFirst:true, orderBy: { field : OCCURRED_AT, direction: DESC}) {
+                nodes {
+                  pullRequest {
+                    title
+                    url
+                    createdAt
+                    repository {
+                      id
+                      name
+        			        nameWithOwner
                       url
+                      description
                       createdAt
-                      repository {
-                        id
-                        name
-                        url
-                        description
-                        createdAt
-                        updatedAt
-                        homepageUrl
-                        languages(first: $items) {
-                          nodes {
-                            name
-                          }
+                      updatedAt
+                      homepageUrl
+                      languages(first: $items) {
+                        nodes {
+                          name
                         }
-                        repositoryTopics(first: $items) {
-                          nodes {
-                            topic {
-                              name
-                            }
+                      }
+                      repositoryTopics(first: $items) {
+                        nodes {
+                          topic {
+                            name
                           }
                         }
                       }
                     }
                   }
                 }
-              } 
+              }
             }
           }
         }
@@ -107,7 +106,6 @@
             'content-type':"application/json"
             ,'Authorization': `bearer ${accessToken.githubAccessToken}`,
         }
-        //,'body':"{\"query\":\"query($items:Int!) {\\n  getRequestRepos : user(login:\\\"nileshsp\\\") {\\n\\t\\trepositories(first: $items) {\\n      nodes {\\n\\t\\t\\t\\tid\\n        name\\n        url\\n        description\\n        createdAt\\n        updatedAt\\n        homepageUrl \\n        languages(first:$items) {\\n          nodes {\\n            name\\n          }\\n        }\\n        repositoryTopics(first:$items) {\\n          nodes {\\n            topic {\\n              name\\n            }\\n          }\\n        } \\n      }\\n    }\\n  }\\n}\",\"variables\":{\"items\":100}}"
         ,'body': JSON.stringify({
           query: repoQuery,
           variables: { user, items, fork, fromdate }
@@ -118,15 +116,17 @@
       .then(data => {
         let preloadRepositories = [];
         if(data.message) {
-          console.log(`github response`,data.message);
+          console.error(`github response`,data.message);
           return { preloadRepositories };
         }
         if(data !== null &&  data !== undefined) { 
-          preloadRepositories = data.data.getRequestRepos.repositories.nodes.map(r => ({
-            id : r.id
+          const listRepo = (type, title, url, createdAt, r) => ({
+            contribution: { type, title, url, createdAt }
+            , id: r.id
             , name: r.name
+			      , nameWithOwner: r.nameWithOwner
             , url: r.url
-            , description: r.description
+            , description: r.description 
             , createdat: r.createdAt
             , updatedat: r.updatedAt
             , demourl:((r.homepageUrl !== null || undefined) 
@@ -135,12 +135,27 @@
                       ) 
             , languages: r.languages.nodes.map(x => x.name)
             , topics: r.repositoryTopics.nodes.map(x => x.topic.name)
-          }));
+          })
+          //append repositories
+          preloadRepositories = data.data.getRequestRepos.repositories.nodes.map(r => listRepo(null, null, null, null, r));
+          //append issues conributed to repositories
+          preloadRepositories = [...preloadRepositories
+                                  , ...data.data.getRequestRepos.contributionsCollection.issueContributions.nodes
+                                      .map(r => listRepo("issue", r.issue.title, r.issue.url, r.issue.createdAt, r.issue.repository))];
+          //append pull request conributed to repositories
+          preloadRepositories = [...preloadRepositories
+                                  , ...data.data.getRequestRepos.contributionsCollection.pullRequestContributions.nodes
+                                      .map(r => listRepo("pull request", r.pullRequest.title, r.pullRequest.url, r.pullRequest.createdAt, r.pullRequest.repository))];
+          // sort list by created dates
           preloadRepositories = preloadRepositories.sort(function(a, b) {
-              var dateA = new Date(a.createdat), dateB = new Date(b.createdat);
+              const dateA = new Date(a.contribution.createdAt || a.createdat), dateB = new Date(b.contribution.createdAt || b.createdat);
               return dateB - dateA;
           });
-          //console.log(preloadRepositories);
+          // append index
+          preloadRepositories = preloadRepositories.map((r,i) => { 
+            return { ...r, index:i}; 
+          });
+          console.info(preloadRepositories);
         }
         else {
           console.log(`Github API responded with irrelevant data : `,data)
@@ -148,14 +163,15 @@
         return { preloadRepositories };
     })  
     .catch (error => {
-      console.log(`Error is : ${error}`);      
+      console.error(`Error is : ${error}`);      
     });
 	}
 </script>
 <script>
+	//import VirtualList from '@sveltejs/svelte-virtual-list';
   import { fade, fly } from 'svelte/transition';
   import { onMount } from "svelte";
-
+  
   export let repositories = {}, preloadRepositories = {};
   let repositoryYear = null;
   let position = "", flyIn = "";
@@ -190,27 +206,37 @@
   <div class="main" out:fade>
     <div class="timeline">
       {#if repositories.length > 0}
-        {#each repositories as { id, name, url, description, createdat, updatedat, demourl, languages, topics } ,i}
-          {#if showYear(createdat)}
-            <div class="containerYear" data-content={(new Date(createdat)).getFullYear()} in:fly="{{ y: -300, duration: duration }}">
+        <!-- <VirtualList height="74vh" items={repositories} let:item > -->
+        {#each repositories as item}
+          {#if showYear(item.contribution.createdAt || item.createdat)}
+            <div class="containerYear" data-content={(new Date(item.contribution.createdAt || item.createdat)).getFullYear()} in:fly="{{ y: -300, duration: duration }}">
             </div>
           {/if}
-          <div class={"container " + getPosition(i)} data-content={(new Date(createdat)).toLocaleString('en-us', { month: 'short' })}>
-            <div class="content" in:fly={getItemTransition(i)}>
-              <h3><a rel="noopener, preconnect" href={url} target="_blank">{name}</a></h3>
-              <p>{description}</p>
-              <span class="topics">{topics.concat(languages).join(", ")}</span>
+          <div class={"container " + getPosition(item.index)} data-content={(new Date(item.contribution.createdAt || item.createdat)).toLocaleString('en-us', { month: 'short' })}>
+            <div class="content" in:fly={getItemTransition(item.index)}>
+              <h3><a rel="noopener, preconnect" href={item.url} target="_blank">{item.nameWithOwner}</a></h3>
+              {#if item.contribution.type}
+                <p>
+                  contributed with {item.contribution.type}: <a rel="noopener, preconnect" href={item.contribution.url} target="_blank" >{item.contribution.title}</a>
+                </p>
+              {:else}
+                <p>
+                  created project: {item.description}
+                </p>
+              {/if}  
+              <span class="topics">{item.topics.concat(item.languages).join(", ")}</span>
               <div class="contentFooter">
                 <div>
-                  {#if demourl !== "" } <a rel="noopener, preconnect" href={demourl} target="_blank" >demo</a>{/if}
+                  {#if item.demourl !== "" } <a rel="noopener, preconnect" href={item.demourl} target="_blank" >demo</a>{/if}
                 </div>
                 <div>
-                  <i>initiated @ {getReadableDate(createdat)}</i>
+                  <i>initiated @ {getReadableDate(item.contribution.createdAt || item.createdat)}</i>
                 </div>
               </div>
             </div>
           </div>
         {/each}
+        <!-- </VirtualList> -->
       {/if}
     </div>
   </div>
