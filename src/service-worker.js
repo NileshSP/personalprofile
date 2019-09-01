@@ -52,7 +52,7 @@ if(workbox) {
 		const currReq = await event.request.clone();
 		const currReqBody = await currReq.text();
 		const regExMatch = /getRequest\w+/gi.exec(currReqBody);
-		const cacheName = regExMatch.length > 0 ? regExMatch[0] : null;
+		const cacheName = regExMatch && regExMatch.length > 0 ? regExMatch[0] : null;
 		return caches.open(cachesName).then(async (cache) => {
 			try {			
 				return await fetch(event.request)
@@ -80,7 +80,7 @@ if(workbox) {
 			});
 		}
 		else {
-			console.log(`graphqlFromCache cache with name as ${cacheName} not found in ${cachesName}`)
+			console.log(`graphqlFromCache: cache not found in ${cachesName}`)
 		}
 	}
 
