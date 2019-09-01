@@ -4,14 +4,114 @@
         method:'GET',
         mode: 'cors'      
       });
-      const accessToken = await getAccessToken.json();
+      const accessToken = await getAccessToken.json(), 
+      user = "nileshsp", items = 50, fork = false, fromdate = "2019-01-01T00:00:00Z",
+      repoQuery = `
+      query ($user: String!, $items: Int!, $fork: Boolean!, $fromdate: DateTime!) {
+          getRequestRepos: user(login: $user) {
+            repositories(first: $items, isFork: $fork) {
+              nodes {
+                id
+                name
+                url
+                description
+                createdAt
+                updatedAt
+                homepageUrl
+                languages(first: $items) {
+                  nodes {
+                    name
+                  }
+                }
+                repositoryTopics(first: $items) {
+                  nodes {
+                    topic {
+                      name
+                    }
+                  }
+                }
+              }
+            }
+            contributionsCollection(from: $fromdate ) {
+              issueContributionsByRepository(maxRepositories:$items) {
+                contributions(first:$items) {
+                  nodes {
+                    issue {
+                      title
+                      url
+                      createdAt
+                      repository {
+                        id
+                        name
+                        url
+                        description
+                        createdAt
+                        updatedAt
+                        homepageUrl
+                        languages(first: $items) {
+                          nodes {
+                            name
+                          }
+                        }
+                        repositoryTopics(first: $items) {
+                          nodes {
+                            topic {
+                              name
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              pullRequestContributionsByRepository(excludeFirst: true){
+                contributions(first:$items) {
+                  nodes {
+                    pullRequest {
+                      title
+                      url
+                      createdAt
+                      repository {
+                        id
+                        name
+                        url
+                        description
+                        createdAt
+                        updatedAt
+                        homepageUrl
+                        languages(first: $items) {
+                          nodes {
+                            name
+                          }
+                        }
+                        repositoryTopics(first: $items) {
+                          nodes {
+                            topic {
+                              name
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              } 
+            }
+          }
+        }
+      `;
       return this.fetch("https://api.github.com/graphql", {
         method:'POST'
         ,'headers':{
             'content-type':"application/json"
             ,'Authorization': `bearer ${accessToken.githubAccessToken}`,
         }
-        ,'body':"{\"query\":\"query($items:Int!) {\\n  getRequestRepos : user(login:\\\"nileshsp\\\") {\\n\\t\\trepositories(first: $items) {\\n      nodes {\\n\\t\\t\\t\\tid\\n        name\\n        url\\n        description\\n        createdAt\\n        updatedAt\\n        homepageUrl \\n        languages(first:$items) {\\n          nodes {\\n            name\\n          }\\n        }\\n        repositoryTopics(first:$items) {\\n          nodes {\\n            topic {\\n              name\\n            }\\n          }\\n        } \\n      }\\n    }\\n  }\\n}\",\"variables\":{\"items\":100}}"
+        //,'body':"{\"query\":\"query($items:Int!) {\\n  getRequestRepos : user(login:\\\"nileshsp\\\") {\\n\\t\\trepositories(first: $items) {\\n      nodes {\\n\\t\\t\\t\\tid\\n        name\\n        url\\n        description\\n        createdAt\\n        updatedAt\\n        homepageUrl \\n        languages(first:$items) {\\n          nodes {\\n            name\\n          }\\n        }\\n        repositoryTopics(first:$items) {\\n          nodes {\\n            topic {\\n              name\\n            }\\n          }\\n        } \\n      }\\n    }\\n  }\\n}\",\"variables\":{\"items\":100}}"
+        ,'body': JSON.stringify({
+          query: repoQuery,
+          variables: { user, items, fork, fromdate }
+        })
         ,'mode':"cors"
       })
       .then(response => response.json())
