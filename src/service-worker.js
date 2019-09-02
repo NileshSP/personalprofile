@@ -66,7 +66,7 @@ if(workbox) {
 										return response;
 									}
 								})
-		} catch (error) {					
+			} catch (error) {					
 				return await graphqlFromCache(event, cachesName, cacheName)
 			}
 		});
@@ -103,7 +103,7 @@ if(workbox) {
 	workbox.routing.registerRoute(
 		({ url, event }) => isGraphQlRequest(url),
 		async ({url, event, params}) => {
-			event.respondWith(graphqlUpdateCache(event, ASSETS));
+			return graphqlUpdateCache(event, ASSETS);
 		},
 		'POST'
 		);

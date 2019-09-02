@@ -155,7 +155,7 @@
           preloadRepositories = preloadRepositories.map((r,i) => { 
             return { ...r, index:i}; 
           });
-          console.info(preloadRepositories);
+          //console.info(preloadRepositories);
         }
         else {
           console.log(`Github API responded with irrelevant data : `,data)
@@ -185,8 +185,9 @@
     const dateValue = (new Date(dateVal));
     return `${dateValue.getDate()} ${dateValue.toLocaleString('en-us', { month: 'short' })} ${dateValue.getFullYear()}`
   }
-  const getPosition = (val) => val % 2 === 0 ? "left" : "right"
-  const getItemTransition = (val) => (getPosition(val) === 'left' ? { x: -100, duration: duration } : { x: 100, duration: duration })
+
+  const getPositionClass = (val) => val % 2 === 0 ? "left" : "right"
+  const getItemTransition = (val) => (getPositionClass(val) === 'left' ? { x: -100, duration: duration } : { x: 100, duration: duration })
   const showYear = (dateVal) => {
     const newYear = (new Date(dateVal)).getFullYear();
     if (repositoryYear === null || repositoryYear !== newYear) {
@@ -212,8 +213,8 @@
             <div class="containerYear" data-content={(new Date(item.contribution.createdAt || item.createdat)).getFullYear()} in:fly="{{ y: -300, duration: duration }}">
             </div>
           {/if}
-          <div class={"container " + getPosition(item.index)} data-content={(new Date(item.contribution.createdAt || item.createdat)).toLocaleString('en-us', { month: 'short' })}>
-            <div class="content" in:fly={getItemTransition(item.index)}>
+          <div class={"container " + getPositionClass(item.index)} data-content={(new Date(item.contribution.createdAt || item.createdat)).toLocaleString('en-us', { month: 'short' })}>
+            <div class={"content "} in:fly={getItemTransition(item.index)} >
               <h3><a rel="noopener, preconnect" href={item.url} target="_blank">{item.nameWithOwner}</a></h3>
               {#if item.contribution.type}
                 <p>
@@ -383,14 +384,14 @@ a:visited {
 }
 
 .contentFooter {
-  background-color: white;
+  background-color: transparent;
   display:grid;
   grid-auto-flow: column;
   justify-content: space-between;  
 }
 
 .content > div > div, p, h3, a, i {
-  background-color: white;
+  background-color: transparent;
 }
 
 /* Media queries - Responsive timeline on screens less than 600px wide */
