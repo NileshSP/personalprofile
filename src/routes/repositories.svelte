@@ -138,25 +138,25 @@
             , languages: r.languages.nodes.map(x => x.name)
             , topics: r.repositoryTopics.nodes.map(x => x.topic.name)
           })
+          
           //append repositories
-          preloadRepositories = data.data.getRequestRepos.repositories.nodes.map(r => listRepo(null, null, null, null, null, r));
-          //append issues conributed to repositories
           preloadRepositories = [...preloadRepositories
+                                  , ...data.data.getRequestRepos.repositories.nodes.map(r => listRepo(null, null, null, null, null, r))
+                                  //append issues conributed to repositories
                                   , ...data.data.getRequestRepos.contributionsCollection.issueContributions.nodes
-                                      .map(r => listRepo("issue", r.issue.title, r.issue.url, r.issue.createdAt, r.issue.closed, r.issue.repository))];
-          //append pull request conributed to repositories
-          preloadRepositories = [...preloadRepositories
+                                      .map(r => listRepo("issue", r.issue.title, r.issue.url, r.issue.createdAt, r.issue.closed, r.issue.repository))
+                                  //append pull request conributed to repositories
                                   , ...data.data.getRequestRepos.contributionsCollection.pullRequestContributions.nodes
                                       .map(r => listRepo("pull request", r.pullRequest.title, r.pullRequest.url, r.pullRequest.createdAt, r.pullRequest.merged, r.pullRequest.repository))];
+
           // sort list by created dates
           preloadRepositories = preloadRepositories.sort(function(a, b) {
-              const dateA = new Date(a.contribution.createdAt || a.createdat), dateB = new Date(b.contribution.createdAt || b.createdat);
-              return dateB - dateA;
-          });
-          // append index
-          preloadRepositories = preloadRepositories.map((r,i) => { 
-            return { ...r, index:i}; 
-          });
+                                    const dateA = new Date(a.contribution.createdAt || a.createdat), dateB = new Date(b.contribution.createdAt || b.createdat);
+                                    return dateB - dateA;
+                                }).map((r,i) => { 
+                                  // append index
+                                  return { ...r, index:i}; 
+                                });
           //console.info(preloadRepositories);
         }
         else {
