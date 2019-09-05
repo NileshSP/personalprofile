@@ -394,6 +394,8 @@ a:visited {
 
 .content > div > div, p, h3, a, i {
   background-color: transparent;
+  overflow: hidden;
+  text-overflow: ellipsis; 
 }
 
 /* Media queries - Responsive timeline on screens less than 600px wide */
