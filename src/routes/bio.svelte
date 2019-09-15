@@ -250,8 +250,8 @@ a, button {
 
 @media screen and (min-width: 600px) {
 	.profilePhoto {
-		width: 350px;
-		height: 350px;
+		width: 200px;
+		height: 200px;
 		margin: 5% auto;
 	}
 
