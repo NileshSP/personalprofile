@@ -64,10 +64,12 @@
 	<h2 in:fly="{{ x: -300, duration: 2000 }}" >{`<p>bio</p>`}</h2>
 	<div class="main" in:fade >
 		<div class="profilePhoto">
-			<img alt='Nilesh' src='favicon.png' />
-			<div class="profilePhotoCaption">Nilesh Patel</div>
-			<div class="profilePhotoPara">constantly improvising...</div>
+			<!-- <img alt='Nilesh' src='favicon.png' /> -->
+			<div >
+				<span >constantly improvising...</span>
+			</div>
 		</div>
+		<div class="profilePhotoCaption">Nilesh Patel</div>
 		<br/>
 		<div class="projects" >
 			<h4>polygot developer with trial & errors available @</h4>
@@ -98,30 +100,96 @@ h2 {
 	display:grid;
 	place-items: center;
 }
+
+@keyframes initialTweak {
+	50% 
+	{ 	
+		transform: rotateX(25deg);
+		transform-origin: bottom;
+ 	};
+}
 @keyframes backgroundAnimation {
 	50% { transform: scale(1.05) };
 }
 .profilePhoto {
-	padding:2em 0em;
+	animation: backgroundAnimation 3s infinite 2s;
+ 	width: 50%;
+	height: 50%;
+	margin: 45% auto;
+	perspective: 1000px;
 	display:grid;
 	place-items: center;
-	animation: backgroundAnimation 3s infinite 2s;
 }
-.profilePhoto > img {
-	max-width: 50%;
-	height:auto;
+.profilePhoto div {
+	animation: initialTweak 4s 1 5s;
+	display: block;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), url('../favicon.png');
+	background-size: cover;
+	transform-style: preserve-3d;
+	transition: all 0.5s;
+	cursor:hand;
 }
+
+.profilePhoto:hover div {
+	transform: rotateX(80deg);
+	transform-origin: bottom;
+}
+
+.profilePhoto div:after {
+	content: '';
+	position: absolute;
+	left: 0;
+	bottom: -35px;
+	width: 100%;
+	height: 36px;
+	background: inherit;
+	background-size: cover;
+	background-position: bottom;
+	transform: rotateX(270deg);
+	transform-origin: top;
+}
+.profilePhoto div span {
+	color: white;
+	position: absolute;
+	top: 100%;
+	left: 25%;
+	width: 50%;
+	font: bold 90% "Open Sans";
+	text-align: center;
+	transform: rotateX(-89.99deg);
+	transform-origin: top;
+	z-index: 1;
+}
+.profilePhoto div:before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border-radius: 50px;
+	background: rgba(0, 0, 0, 0.5);
+	box-shadow: 0 0 100px 50px rgba(0, 0, 0, 0.5);
+	transition: all 0.5s;
+	opacity: 0.15;
+	transform: rotateX(95deg) translateZ(-80px) scale(0.75);
+	transform-origin: bottom;
+}
+
+.profilePhoto:hover div:before {
+	opacity: 1;
+	box-shadow: 0 0 25px 25px rgba(0, 0, 0, 0.5);
+	transform: rotateX(0) translateZ(-60px) scale(0.85);
+}
+
 .profilePhotoCaption {
 	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 	background: linear-gradient(120deg, white ,coral);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-.profilePhotoPara {
-	text-align: center;
-	font-size:80%;
-	width:40%;
 }
 .projects {
 	padding:1em 0em;
@@ -178,5 +246,17 @@ a, button {
 .installAppBanner:hover::after {
  transform: scale(1);
   /* transform-origin: top left; */
+}
+
+@media screen and (min-width: 600px) {
+	.profilePhoto {
+		width: 350px;
+		height: 350px;
+		margin: 5% auto;
+	}
+
+	.profilePhoto div:after {
+		bottom: -25px;
+	}
 }
 </style>
