@@ -3,6 +3,7 @@
 
 	export let segment;
 </script>
+<link href="https://fonts.googleapis.com/css?family=Fira+Code&display=swap" rel="stylesheet">
 <style>
 	.layoutContainer {
 		animation :color-change 3s linear infinite alternate both;
