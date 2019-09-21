@@ -40,7 +40,7 @@
 		<div class="contactDetails" >
 			{#each listDetails as [name, link, display, type],i}
 				<div>{name}</div>
-				<div>=></div>
+				<div style="font-family : 'Fira Code'">=></div>
 				<div>
 					<a rel="noopener, preconnect" 
 						href={link} 
