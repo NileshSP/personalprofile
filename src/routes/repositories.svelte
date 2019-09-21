@@ -1,5 +1,5 @@
 <script context="module">
-	export async function preload({ params, query }) {
+  export async function preload({ params, query }) {
       const getAccessToken = await this.fetch(`https://gist.githubusercontent.com/NileshSP/19bbe3945375eb10d625a980f0da93a1/raw/cc1de90d2ffe796efd6168f31b99178a650d91db/tokens.json`, {
         method:'GET',
         mode: 'cors'      
@@ -88,11 +88,11 @@
           return { preloadRepositories };
         }
         if(data !== null &&  data !== undefined) { 
-          const listRepo = (type, title, url, createdAt, state, r) => ({
-            contribution: { type, title, url, createdAt, state }
+          const listRepo = (contribution, r) => ({
+            contribution
             , id: r.id
             , name: r.name
-			      , nameWithOwner: r.nameWithOwner
+            , nameWithOwner: r.nameWithOwner
             , url: r.url
             , description: r.description 
             , createdat: r.createdAt
@@ -107,16 +107,15 @@
           
           //append repositories
           preloadRepositories = [...preloadRepositories
-                                  , ...data.data.getRequestRepos.repositories.nodes.map(r => listRepo(null, null, null, null, null, r))
+                                  , ...data.data.getRequestRepos.repositories.nodes
+                                      .map(r => listRepo({ type:null, title: null, url: null, createdAt:null, state: null }, r))
                                   //append issues conributed to repositories
                                   , ...data.data.getRequestRepos.contributionsCollection.issueContributions.nodes
-                                      .map(r => listRepo("issue", r.issue.title, r.issue.url, r.issue.createdAt, r.issue.closed, r.issue.repository))
+                                      .map(r => listRepo({ type: "issue", title: r.issue.title, url: r.issue.url, createdAt: r.issue.createdAt, state: r.issue.closed}, r.issue.repository))
                                   //append pull request conributed to repositories
                                   , ...data.data.getRequestRepos.contributionsCollection.pullRequestContributions.nodes
-                                      .map(r => listRepo("pull request", r.pullRequest.title, r.pullRequest.url, r.pullRequest.createdAt, r.pullRequest.merged, r.pullRequest.repository))];
-
-          // sort list by created dates
-          preloadRepositories = preloadRepositories.sort(function(a, b) {
+                                      .map(r => listRepo({ type: "pull request", title: r.pullRequest.title, url: r.pullRequest.url, createdAt: r.pullRequest.createdAt, state: r.pullRequest.merged }, r.pullRequest.repository))
+                                ].sort(function(a, b) {
                                     const dateA = new Date(a.contribution.createdAt || a.createdat), dateB = new Date(b.contribution.createdAt || b.createdat);
                                     return dateB - dateA;
                                 }).map((r,i) => { 
@@ -133,7 +132,7 @@
     .catch (error => {
       console.error(`Error is : ${error}`);      
     });
-	}
+  }
 </script>
 <script>
 	//import VirtualList from '@sveltejs/svelte-virtual-list';
@@ -221,22 +220,22 @@
   background-color: inherit; 
 }
 h2 {
-	padding: 5% 0 0 10%;
-	background: linear-gradient(180deg, orange , red);
+  padding: 5% 0 0 10%;
+  background: linear-gradient(180deg, orange , red);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 a {
-	color: rgb(0,100,200);
+  color: rgb(0,100,200);
   text-decoration: none;
   cursor:hand;
 }
 a:hover {
-	text-decoration: underline;
+  text-decoration: underline;
 }
 a:visited {
-	color: rgb(0,80,160);
+  color: rgb(0,80,160);
 }
 .main {
   padding:50px 0px;
@@ -296,7 +295,7 @@ a:visited {
   position: relative;
   background-color: inherit;
   width: 50%;
-  }
+}
 
 /* The circles on the timeline */
 .container::after {
