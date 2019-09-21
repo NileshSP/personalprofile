@@ -11,26 +11,7 @@
           getRequestRepos: user(login: $user) {
             repositories(first: $items, isFork: $fork) {
               nodes {
-                id
-                name
-  			        nameWithOwner
-                url
-                description
-                createdAt
-                updatedAt
-                homepageUrl
-                languages(first: $items) {
-                  nodes {
-                    name
-                  }
-                }
-                repositoryTopics(first: $items) {
-                  nodes {
-                    topic {
-                      name
-                    }
-                  }
-                }
+                ...repository       
               }
             }
             contributionsCollection(from: $fromdate ) {
@@ -42,26 +23,7 @@
                     createdAt
                     closed
                     repository {
-                      id
-                      name
-        			        nameWithOwner
-                      url
-                      description
-                      createdAt
-                      updatedAt
-                      homepageUrl
-                      languages(first: $items) {
-                        nodes {
-                          name
-                        }
-                      }
-                      repositoryTopics(first: $items) {
-                        nodes {
-                          topic {
-                            name
-                          }
-                        }
-                      }
+                      ...repository
                     }
                   }
                 }
@@ -74,32 +36,36 @@
                     createdAt
                     merged
                     repository {
-                      id
-                      name
-        			        nameWithOwner
-                      url
-                      description
-                      createdAt
-                      updatedAt
-                      homepageUrl
-                      languages(first: $items) {
-                        nodes {
-                          name
-                        }
-                      }
-                      repositoryTopics(first: $items) {
-                        nodes {
-                          topic {
-                            name
-                          }
-                        }
-                      }
+                      ...repository
                     }
                   }
                 }
               }
             }
           }
+        }
+
+        fragment repository on Repository {
+            id
+            name
+            nameWithOwner
+            url
+            description
+            createdAt
+            updatedAt
+            homepageUrl
+            languages(first: $items) {
+              nodes {
+                name
+              }
+            }
+            repositoryTopics(first: $items) {
+              nodes {
+                topic {
+                  name
+                }
+              }
+            }
         }
       `;
       return this.fetch("https://api.github.com/graphql", {
