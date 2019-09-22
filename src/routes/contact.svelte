@@ -1,5 +1,5 @@
 <script>
-import ListContacts from "../components/listContacts.svelte";
+import ListContacts from "../components/listcontacts.svelte";
 const preloadContacts = [
 	["linkedIn", "https://www.linkedin.com/in/nileshspatel", "linkedin.com/in/nileshspatel", "web"],
 	["email", "mailto:emailnileshp@gmail.com", "emailnileshp@gmail.com", "app"],
