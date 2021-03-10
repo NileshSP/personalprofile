@@ -1,1 +1,0 @@
-{"version":3,"file":"index.e6562615.js","sources":["../../../src/routes/index.svelte"],"sourcesContent":["<script>\nconst onload = () => window.location.replace(\"bio\")\n</script>\n<svelte:window  on:load={onload()} />\n<svelte:head>\n\t<title>Nilesh</title>\n</svelte:head>"],"names":["onload","window","location","replace"],"mappings":"uKAGyBA,kEAFV,IAAMC,OAAOC,SAASC,QAAQ"}

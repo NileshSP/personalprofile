@@ -1,0 +1,1 @@
+import{c as o,d as t,b as n,C as s,a}from"./chunk.6618d831.js";function i(o){var t;return{c(){this.h()},l(o){this.h()},h(){document.title="Nilesh",t=s(window,"load",o.onload())},m:a,p:a,i:a,o:a,d(o){t()}}}function e(o){return{onload:()=>window.location.replace("bio")}}export default class extends o{constructor(o){super(),t(this,o,e,i,n,[])}}

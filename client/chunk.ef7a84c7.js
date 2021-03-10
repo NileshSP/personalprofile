@@ -1,2 +1,0 @@
-import{a as n,b as t}from"./chunk.9938d60f.js";function c(c,e=n){let o;const r=[];function s(n){if(t(c,n)){if(c=n,!o)return;r.forEach(n=>n[1]()),r.forEach(n=>n[0](c))}}return{set:s,update:function(n){s(n(c))},subscribe:function(t,f=n){const u=[t,f];return r.push(u),1===r.length&&(o=e(s)||n),t(c),()=>{const n=r.indexOf(u);-1!==n&&r.splice(n,1),0===r.length&&o()}}}}export{c as a};
-//# sourceMappingURL=chunk.ef7a84c7.js.map

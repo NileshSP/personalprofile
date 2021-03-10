@@ -1,2 +1,0 @@
-import{a as n,b as t,c as o,d as i,e as a,f as c,g as s,h as u,H as r,s as e}from"./chunk.c2b0acb4.js";function f(n){var t;return{c:function(){this.h()},l:function(n){this.h()},h:function(){document.title="Nilesh",t=r(window,"load",n.onload())},m:e,p:e,i:e,o:e,d:function(n){t()}}}function h(n){return{onload:function(){return window.location.replace("bio")}}}export default(function(r){function e(n){var u;return t(this,e),u=o(this,i(e).call(this)),a(c(u),n,h,f,s,[]),u}return n(e,u),e}());
-//# sourceMappingURL=index.82ee943b.js.map
