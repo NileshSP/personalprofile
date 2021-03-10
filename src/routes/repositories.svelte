@@ -15,7 +15,7 @@
               }
             }
             contributionsCollection(from: $fromdate ) {
-              issueContributions( first: $items, orderBy: { field : OCCURRED_AT, direction: DESC}) {
+              issueContributions( first: $items, orderBy: { direction: DESC}) {
                 nodes {
                   issue {
                     title
@@ -28,7 +28,7 @@
                   }
                 }
               }
-              pullRequestContributions( first: $items, excludeFirst:true, orderBy: { field : OCCURRED_AT, direction: DESC}) {
+              pullRequestContributions( first: $items, excludeFirst:true, orderBy: { direction: DESC}) {
                 nodes {
                   pullRequest {
                     title
