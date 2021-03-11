@@ -99,10 +99,10 @@ h2 {
 	{ 	
 		transform: rotateX(25deg);
 		transform-origin: bottom;
- 	};
+ 	}
 }
 @keyframes backgroundAnimation {
-	50% { transform: scale(1.05) };
+	50% { transform: scale(1.05) }
 }
 .profilePhoto {
 	animation: backgroundAnimation 3s infinite 2s;

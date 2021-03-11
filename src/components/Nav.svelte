@@ -156,7 +156,7 @@
 		transition: all 0.6s ease;
 	}
 	@keyframes svgAnimation {
-		50% { transform: scale(1.2) };
+		50% { transform: scale(1.2) }
 	}
 	li:nth-of-type(1) {
 		animation: svgAnimation 1s ease-in-out alternate-reverse 500ms ;
